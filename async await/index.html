@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      async function prom() {
+        await fetch("https://restcountries.eu/rest/v2/all")
+          .then(function (resp) {
+            return resp.json();
+          })
+          .then(function (jsonString) {
+            var container = document.createElement("div");
+            container.setAttribute("class", "container-fluid");
+            document.body.appendChild(container);
+
+            var row = document.createElement("div");
+            row.setAttribute("class", "row");
+
+            row.setAttribute("style", "background-color:black; padding:20px");
+
+            container.appendChild(row);
+
+            for (let i = 0; i < 250; i++) {
+              var name = document.createElement("div");
+              name.setAttribute("class", "col-sm");
+              name.setAttribute(
+                "style",
+                "width:200px; padding:20px; text-align:center;background-image: linear-gradient(to bottom right, brown, yellow);margin:20px"
+              );
+              name.innerHTML = jsonString[i].name;
+              row.appendChild(name);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var img = document.createElement("img");
+              // img.setAttribute("class", "col-3");
+
+              img.setAttribute("src", jsonString[i].flag);
+              img.setAttribute("style", "width:200px; padding:10px;");
+              name.appendChild(img);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var cap = document.createElement("span");
+              cap.setAttribute(
+                "style",
+                "background-color:green; color:white; border-radius:5px; padding:1px;"
+              );
+              cap.innerHTML = "Capital: " + jsonString[i].capital;
+              name.appendChild(cap);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var code = document.createElement("span");
+
+              code.innerHTML =
+                "Country Code: " +
+                jsonString[i].alpha2Code +
+                " " +
+                jsonString[i].alpha3Code;
+              name.appendChild(code);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var region = document.createElement("span");
+
+              region.innerHTML = "Region: " + jsonString[i].region;
+              name.appendChild(region);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var latlong = document.createElement("span");
+
+              // var ll = jsonString[i].latlng.toFixed(2);
+              latlong.innerHTML = "LatLong: " + jsonString[i].latlng;
+              name.appendChild(latlong);
+
+              var br = document.createElement("br");
+              name.appendChild(br);
+
+              var btn = document.createElement("button");
+              btn.setAttribute("style", "opacity:70%;  font-weight: bold");
+              btn.innerHTML = "Click for weather";
+              btn.addEventListener("click", weather);
+              name.appendChild(btn);
+
+              function weather() {
+                console.log("clicked");
+                var key = "f5c062dbc12381c3fb8eea5e5cad2799";
+                fetch(
+                  "https://api.openweathermap.org/data/2.5/weather?q=" +
+                    jsonString[i].capital +
+                    "&appid=" +
+                    key
+                )
+                  .then(function (resp2) {
+                    return resp2.json();
+                  }) // Convert data to json
+                  .then(function (data2) {
+                    console.log(data2.main);
+
+                    var flex = document.createElement("div");
+                    flex.setAttribute(
+                      "style",
+                      "display:flex; align-items: center; justify-content: center;"
+                    );
+                    document.body.appendChild(flex);
+                    var pop = document.createElement("div");
+
+                    flex.appendChild(pop);
+                    var pop0 = document.createElement("div");
+                    pop0.setAttribute(
+                      "style",
+                      "cursor:pointer; font-weight: bold; position:relative; top:-10px; font-size:20px; color : grey;"
+                    );
+                    pop0.addEventListener("click", close);
+                    var pop1 = document.createElement("div");
+                    var pop2 = document.createElement("div");
+                    var pop3 = document.createElement("div");
+                    var pop4 = document.createElement("div");
+                    pop4.setAttribute(
+                      "style",
+                      "font-weight:bold ; text-align: left; letter-spacing: 5px "
+                    );
+
+                    pop0.innerHTML = "close[x]";
+                    pop4.innerHTML = "City: " + jsonString[i].capital;
+                    pop1.innerHTML = "Max Temp " + data2.main.temp_max;
+                    pop2.innerHTML = "Min Temp " + data2.main.temp_min;
+                    pop3.innerHTML = "Humidity " + data2.main.humidity;
+                    pop.appendChild(pop0);
+                    pop.appendChild(pop4);
+                    pop.appendChild(pop1);
+                    pop.appendChild(pop2);
+                    pop.appendChild(pop3);
+
+                    pop.setAttribute(
+                      "style",
+                      "position:fixed; top:100px;  background-color:white; padding:20px; border: 3px solid black; margin: 20px; text-align:right ;font-size:40px; border-radius:10px; "
+                    );
+                    document.body.setAttribute(
+                      "style",
+                      "background-color:black"
+                    );
+                    //  row.setAttribute("style"," opacity:50%")
+                    row.setAttribute(
+                      "style",
+                      "background-color:#800000; padding:20px; opacity:50%"
+                    );
+
+                    function close() {
+                      pop.setAttribute("style", "display:hidden");
+                      document.body.setAttribute(
+                        "style",
+                        "background-color:white"
+                      );
+                      //  row.setAttribute("style"," opacity:100%")
+                      row.setAttribute(
+                        "style",
+                        "background-color:black; padding:20px; opacity:100%"
+                      );
+                    }
+                  })
+                  .catch(function () {
+                    console.log("Error");
+                  });
+              }
+            }
+          })
+          .catch(function () {
+            console.log("Error");
+          });
+      }
+
+      prom();
+    </script>
+  </body>
+</html>
